@@ -6,6 +6,8 @@ import json
 
 from urllib.parse import urlencode
 
+import web_token
+
 # read file with auth info if it not exist then create it
 try:    
     with open("auth_info.txt", "r+") as f:
@@ -24,6 +26,10 @@ spotify_login = SpotifyAPI.SpotifyAPI(client_id, client_secret)
 print(spotify_login.perform_auth())
 token = spotify_login.access_token
 print(token)
+
+# get token from spotify website
+t = web_token.WebToken()
+w_token = t.get_token()
 
 def url(pl_endpoint, pl_data):
     '''form a valid url from endpoint and data'''
