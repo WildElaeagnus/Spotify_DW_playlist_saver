@@ -32,7 +32,7 @@ class WebToken(object):
 		
     def get_token(self, ):
         '''return token, if browser incorrect return None'''
-
+        
         if(self.web_browser == 'chrome'):
             options = webdriver.ChromeOptions()
             options.add_argument(f"user-data-dir={self.browser_profile_path}")
@@ -48,16 +48,17 @@ class WebToken(object):
             print("not a suitable browser")
             return None
         # wait till page loads up
-        # time.sleep(10)
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, '//button[@data-target="#oauth-modal"]')))
+        WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, '//button[@data-target="#oauth-modal"]')))
 
         # close cookie window
         try:
-            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, 'onetrust-close-btn-container')))
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, 'onetrust-close-btn-container')))
             cci = driver.find_element_by_id('onetrust-close-btn-container')
             cci.click()
         except selenium.common.exceptions.ElementNotInteractableException:
             print('no coockie window')
+        except selenium.common.exceptions.TimeoutException:
+            print('coockie window not loaded')
         # wait till window animation ends
         time.sleep(1)
         # click get token bth to activate hidden menu
@@ -78,15 +79,27 @@ class WebToken(object):
         btn.click()
         
         # copy token into var
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="OAuth Access Token"]')))
+        WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.XPATH, '//input[@placeholder="OAuth Access Token"]')))
         content = driver.find_element_by_xpath('//input[@placeholder="OAuth Access Token"]')
         token = content.get_attribute("value")
 
         # our job here is done
+    
         driver.close()
         return token
+    def close(self, ):
+        self.driver.close()
+        return self.token
 
 if __name__ == '__main__':
-    t = WebToken()
+    t = WebToken(
+        browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
+        webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
+        firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
+        web_browser='firefox'
+    )
     print(t.get_token())
-
+# geckodriver: add to PATH or put in C:/webdrivers
+# about:profiles
+# auth window will appear if profile not logged in
+# it will be 5 min to logon 

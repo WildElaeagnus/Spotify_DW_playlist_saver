@@ -1,3 +1,5 @@
 
 auth_info.txt
 
+*.pyc
+.vscode/settings.json
