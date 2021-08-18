@@ -7,15 +7,17 @@ import os
 from time import sleep
 import datetime
 from selenium.common.exceptions import ElementClickInterceptedException
-
 from urllib.parse import urlencode
-
 import web_token
+
+DEBUG = True
+# DEBUG = False
+if DEBUG: print('DEBUG mode enabled, playlist not gonna be saved')
 
 # read file with auth info if it not exist then create it
 try:    
     with open("auth_info.txt", "r+") as f:
-        print(f.readlines())
+        # print(f.readlines())
         config = configparser.ConfigParser()
         config.read("auth_info.txt")
         # if we have only client id secret and user id we can only save whole DW playlist and cant see witch song were disliked
@@ -55,22 +57,37 @@ except FileNotFoundError:
 # token = spotify_login.access_token
 # print(token)
 
-# get token from spotify website
-t = web_token.WebToken(
-    browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
-    webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
-    firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
-    web_browser='firefox'
-)
-try:
-    w_token = t.get_token()
-except ElementClickInterceptedException:
-    t.close()
-    w_token = t.get_token()
+# define defaults for config
+# user id was not transferred
+if not user_id: pass
+# browser was not defined
+if not web_browser: web_browser = 'firefox'
+# no save full playlist by defaukt
+if not save_full_playlist: save_full_playlist = False
+# is playlist public or private by defaule public
+if not publisity: publisity = 'public'
+
+# token was not defined manually
+
+if not token_manual:
+    # get token from spotify website        
+    t = web_token.WebToken(
+        browser_profile_path=browser_profile_path,
+        webdriver_exec_path=webdriver_exec_path,
+        firefox_binary_path=firefox_binary_path,
+        web_browser=web_browser
+    )
+    try:
+        w_token = t.get_token()
+    except ElementClickInterceptedException:
+        t.close()
+        w_token = t.get_token()
+else: w_token = token_manual
 
 def url(pl_endpoint, pl_data):
     '''form a valid url from endpoint and data'''
     return f'{pl_endpoint}?{pl_data}'
+
 
 # header for request
 headers = {
@@ -81,16 +98,17 @@ pl_endpoint = f'https://api.spotify.com/v1/users/{user_id}/playlists'
 pl_data = urlencode({"limit": 50})
 r = requests.get(url(pl_endpoint, pl_data), headers=headers)
 print(r)
-# find DW playlist id in response
-loaded_json = json.loads(r.text)
-items = loaded_json['items']
-for i in items:
-	if i['name'] == 'Discover Weekly':
-		DW_playlist_url = i['external_urls']
-		DW_playlist_href = i['href']
-        # TODO add a condition if DW playlist not found
-DW_id = DW_playlist_href.split("/")[-1]
-print(f'DW_id: {DW_id}')
+if not DEBUG:
+    # find DW playlist id in response
+    loaded_json = json.loads(r.text)
+    items = loaded_json['items']
+    for i in items:
+        if i['name'] == 'Discover Weekly':
+            DW_playlist_url = i['external_urls']
+            DW_playlist_href = i['href']
+            # TODO add a condition if DW playlist not found
+    DW_id = DW_playlist_href.split("/")[-1]
+    print(f'DW_id: {DW_id}')
 
 # create dict with tracks ids and names from req
 # pl_endpoint = f'https://api.spotify.com/v1/playlists/{DW_id}/tracks'
@@ -184,25 +202,27 @@ def get_playback_state():
 # endregion
 
 # init of algoritm
-device_id = get_aval_device()
-play_detached_song()
-toggle_off_shuffle()
-pause_song()
+if not DEBUG:
+    device_id = get_aval_device()
+    play_detached_song()
+    toggle_off_shuffle()
+    pause_song()
 
 # body of algoritm
 
 # get liked songs id
 DW_likes = []
-for i in range(30):
-    play_song(i, DW_id)
-    sleep(1)
-    # if is_playing == true add to list
-    track_id, track_name, shuffle, is_playing = get_playback_state()
-    if is_playing == True: DW_likes.append(track_id) 
-# stop playback
-pause_song()
+if not DEBUG:
+    for i in range(30):
+        play_song(i, DW_id)
+        sleep(1)
+        # if is_playing == true add to list
+        track_id, track_name, shuffle, is_playing = get_playback_state()
+        if is_playing == True: DW_likes.append(track_id) 
+    # stop playback
+    pause_song()
 
-# if len(DW_id) == 30: raise print('nothing is disliked')
+if (len(DW_id) == 30) and not save_full_playlist: raise Exception('nothing is disliked')
 
 # some prep for playlist creating
 d = datetime.datetime.today()
@@ -217,7 +237,10 @@ DW_likes_name = f'{d.year}_{week}'
 DW_likes_description = f'Creation date: {time_ymdhms}. This playlist was created by robot. Link to github repo /akorzunin/Spotify_DW_playlist_saver'
 
 # create плейлист
-DW_is_public = True
+if publisity == 'private':
+    DW_is_public = False
+elif publisity == 'public':
+    DW_is_public = True
 def create_DW_playlist():
     endpoint = 	f'https://api.spotify.com/v1/users/{user_id}/playlists'
     id_data = urlencode({"user_id": f"{user_id}"})
@@ -228,12 +251,12 @@ def create_DW_playlist():
     }
 
     return requests.post(url(endpoint, id_data), json.dumps(data), headers=headers)
-
-resp = create_DW_playlist()
-# get new playlist id
-loaded_json = json.loads(r.text)
-# loaded_json['items'][-1]
-new_DW_id = dict(resp.headers)['location'].split('/')[-1]
+if not DEBUG:
+    resp = create_DW_playlist()
+    # get new playlist id
+    loaded_json = json.loads(r.text)
+    # loaded_json['items'][-1]
+    new_DW_id = dict(resp.headers)['location'].split('/')[-1]
 
 # add songs from list to new playlist
 def fill_DW_playlist():
@@ -243,9 +266,8 @@ def fill_DW_playlist():
     data = {"uris": [f'spotify:track:{i}' for i in DW_likes]}
 
     return requests.post(url(endpoint, id_data), json.dumps(data), headers=headers)
-fill_DW_playlist()
-
-
+if not DEBUG:
+    fill_DW_playlist()
 
 # TODO u need to decide how to schedle this skript each week
 # (but what to do if none of devices is up???)

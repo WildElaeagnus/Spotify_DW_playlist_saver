@@ -3,6 +3,7 @@ import selenium
 from typing import Any
 from selenium import webdriver
 import time
+import keyboard
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.by import By
@@ -56,14 +57,25 @@ class WebToken(object):
             cci = driver.find_element_by_id('onetrust-close-btn-container')
             cci.click()
         except selenium.common.exceptions.ElementNotInteractableException:
-            print('no coockie window')
+            print('coockie window not found')
+            # send keys tab tab tab enter
         except selenium.common.exceptions.TimeoutException:
             print('coockie window not loaded')
         # wait till window animation ends
         time.sleep(1)
-        # click get token bth to activate hidden menu
-        get_token_btn = driver.find_element_by_xpath('//button[@data-target="#oauth-modal"]')
-        get_token_btn.click()
+        try:
+            # click get token bth to activate hidden menu
+            get_token_btn = driver.find_element_by_xpath('//button[@data-target="#oauth-modal"]')
+            get_token_btn.click()
+        except selenium.common.exceptions.ElementClickInterceptedException:
+            # if we here means that cookie window still open
+            [keyboard.send("Tab") for _ in range(3)]
+            keyboard.send("Enter")
+            time.sleep(1)
+            get_token_btn = driver.find_element_by_xpath('//button[@data-target="#oauth-modal"]')
+            get_token_btn.click()
+            # so i gave up at this pont
+            print('coockie window was closed with keyboard lib')
 
         # clik checkboxes with requered permissions
         permission_list = list(self.permission_dict.values())
@@ -89,13 +101,13 @@ class WebToken(object):
         return token
     def close(self, ):
         self.driver.close()
-        return self.token
+        return 0
 
 if __name__ == '__main__':
     t = WebToken(
-        # browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
-        # webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
-        # firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
+        browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
+        webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
+        firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
         web_browser='firefox'
     )
     print(t.get_token())
