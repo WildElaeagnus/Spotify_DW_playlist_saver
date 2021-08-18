@@ -49,7 +49,7 @@ class WebToken(object):
             return None
         # wait till page loads up
         WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, '//button[@data-target="#oauth-modal"]')))
-
+        self.driver = driver
         # close cookie window
         try:
             WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, 'onetrust-close-btn-container')))
@@ -84,7 +84,7 @@ class WebToken(object):
         token = content.get_attribute("value")
 
         # our job here is done
-    
+        
         driver.close()
         return token
     def close(self, ):
@@ -93,9 +93,9 @@ class WebToken(object):
 
 if __name__ == '__main__':
     t = WebToken(
-        browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
-        webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
-        firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
+        # browser_profile_path=r'C:\Users\Akorz\AppData\Roaming\Mozilla\Firefox\Profiles\rwe75su1.auto',
+        # webdriver_exec_path=r'C:\Users\Akorz\Desktop\Python_code\SPOTIFY_pl\webdrivers\geckodriver.exe',
+        # firefox_binary_path=r"C:\Program Files\Mozilla Firefox\firefox.exe",
         web_browser='firefox'
     )
     print(t.get_token())

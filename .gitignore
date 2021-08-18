@@ -3,3 +3,4 @@ auth_info.txt
 
 *.pyc
 .vscode/settings.json
+geckodriver.log

@@ -3,6 +3,7 @@ import requests
 import SpotifyAPI
 import configparser
 import json
+import os
 from time import sleep
 import datetime
 from selenium.common.exceptions import ElementClickInterceptedException
@@ -20,14 +21,34 @@ try:
         # if we have only client id secret and user id we can only save whole DW playlist and cant see witch song were disliked
         client_id = str(config.get("Spotify_auth_info", "client_id"))
         client_secret = str(config.get("Spotify_auth_info", "client_secret"))
-        # userid(manual)
+        # userid(manual)*
         user_id = str(config.get("Spotify_auth_info", "user_id"))
         # token(manual)
+        token_manual = str(config.get("Spotify_auth_info", "token_manual"))
+        # browser_profile_path:'C:\\Users\\Akorz\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\ukml7b3k.automation'
+        browser_profile_path= str(config.get("Spotify_auth_info", "browser_profile_path"))
+        # webdriver_exec_path: "C:\\Users\\akorz\\Downloads\\geckodriver-v0.29.1-win64\\geckodriver.exe"
+        webdriver_exec_path=str(config.get("Spotify_auth_info", "webdriver_exec_path"))
+        # firefox_binary_path: "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+        firefox_binary_path= str(config.get("Spotify_auth_info", "firefox_binary_path"))
+        # firefox or chrome default: firefox
+        web_browser= str(config.get("Spotify_auth_info", "web_browser"))
+        # if playlist has all 30 songs it's not gonna be saved
+        save_full_playlist = str(config.get("Spotify_auth_info", "save_full_playlist"))
+        # is new playlist gonna be public or private default: public
+        publisity = str(config.get("Spotify_auth_info", "publisity"))
+        # name of device to play songs from DW playlist
+        fav_device_name = str(config.get("Spotify_auth_info", "fav_device_name"))
+        
+
+
+
 except FileNotFoundError:
     with open("auth_info.txt", "w+") as f:
-        f.write('[Spotify_auth_info]\nclient_id: \nclient_secret: \nuser_id: \n')
-
-# wrap in try: except: in case we using no webdriver to obtain powerful token
+        f.write('[Spotify_auth_info]\nclient_id: \nclient_secret: \nuser_id: \ntoken_manual: \nbrowser_profile_path: \nwebdriver_exec_path: \nfirefox_binary_path: \nweb_browser: \nsave_full_playlist: \npublisity: \nfav_device_name: \n')
+    if os.path.isfile("auth_info.txt"):
+        raise Exception('File auth_info.txt created')
+# TODO wrap in try: except: in case we using no webdriver to obtain powerful token
 # print(f'id: {client_id}\nsecret: {client_secret}')
 # spotify_login = SpotifyAPI.SpotifyAPI(client_id, client_secret)
 # print(spotify_login.perform_auth())
