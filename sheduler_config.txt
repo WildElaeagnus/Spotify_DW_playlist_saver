@@ -1,0 +1,3 @@
+[Sheduler_config]
+period: daily, 20:00
+skript_name_py: Spotify_DW_playlist_saver.py 

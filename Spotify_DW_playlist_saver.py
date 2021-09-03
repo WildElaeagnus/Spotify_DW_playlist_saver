@@ -10,7 +10,8 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from urllib.parse import urlencode
 import web_token
 
-DEBUG = True
+DEBUG = not __debug__
+# DEBUG = True
 # DEBUG = False
 if DEBUG: print('DEBUG mode enabled, playlist not gonna be saved')
 
@@ -50,7 +51,7 @@ except FileNotFoundError:
         f.write('[Spotify_auth_info]\nclient_id: \nclient_secret: \nuser_id: \ntoken_manual: \nbrowser_profile_path: \nwebdriver_exec_path: \nfirefox_binary_path: \nweb_browser: \nsave_full_playlist: \npublisity: \nfav_device_name: \n')
     if os.path.isfile("auth_info.txt"):
         raise Exception('File auth_info.txt created')
-# TODO wrap in try: except: in case we using no webdriver to obtain powerful token
+# TODO wrap in try: except: in case we using no webdriver to obtain token
 # print(f'id: {client_id}\nsecret: {client_secret}')
 # spotify_login = SpotifyAPI.SpotifyAPI(client_id, client_secret)
 # print(spotify_login.perform_auth())
@@ -183,8 +184,6 @@ def get_playback_state():
     # data = urlencode({"market": "Ru"})
     data = None
     r = requests.get(url(endpoint, data), headers=headers)
-    # print(r)
-    # 204 no content
     # parse json with currently playing song
     loaded_json__ = json.loads(r.text)
     items = loaded_json__['item']
@@ -253,9 +252,8 @@ def create_DW_playlist():
     return requests.post(url(endpoint, id_data), json.dumps(data), headers=headers)
 if not DEBUG:
     resp = create_DW_playlist()
-    # get new playlist id
+    # get new playlist id 
     loaded_json = json.loads(r.text)
-    # loaded_json['items'][-1]
     new_DW_id = dict(resp.headers)['location'].split('/')[-1]
 
 # add songs from list to new playlist

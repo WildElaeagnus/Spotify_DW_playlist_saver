@@ -19,3 +19,4 @@ permission_dict = {
             'user-read-currently-playing': True,
             'user-read-recently-played': False,
         }
+        

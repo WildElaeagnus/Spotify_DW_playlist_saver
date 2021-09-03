@@ -61,4 +61,4 @@ if __name__ == '__main__':
     client_secret = '123'
     spotify = SpotifyAPI(client_id, client_secret)
     print(spotify.perform_auth())
-    print(spotify.access_token)
+    print(spotify.access_token) 
