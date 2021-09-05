@@ -14,3 +14,4 @@ reqpot/requirements.txt
 reqpot/permissions.py
 reqpot/config_parser.py
 .vscode/.ropeproject/config.py
+auth_info.txt
