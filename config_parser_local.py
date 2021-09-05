@@ -2,9 +2,8 @@
 """
 import configparser
 import os
-from typing import ClassVar
 
-class ConfigParser(object):
+class ConfigParserClass(object):
     """This method is used to initialize the ConfigParser class .
 
     kwargs:
@@ -20,7 +19,7 @@ class ConfigParser(object):
         Raises:
             Exception: [FileNotFoundError]
         """      
-        super(ConfigParser, self).__init__()
+        super(ConfigParserClass, self).__init__()
         self.filename = kwargs.pop('filename')
         self.config_header = kwargs.pop('config_header')
         self.configs_list = kwargs.pop('configs_list')
@@ -50,7 +49,7 @@ class ConfigParser(object):
 
 
 if __name__ == '__main__':
-    c = ConfigParser(
+    c = ConfigParserClass(
         filename = "config.txt",
         config_header="Config_section",
         configs_list = ['config_1', 'congfig_2']

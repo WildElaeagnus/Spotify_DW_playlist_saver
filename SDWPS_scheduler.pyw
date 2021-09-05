@@ -1,10 +1,13 @@
 import datetime
 import sys
+import os
 from time import sleep
 from calendar import monthrange
+import configparser
+import web_token
+import config_parser_local
 
-from config_parser import ConfigParser
-
+DEBUG = not __debug__
 
 def calc_time(minute, hour, h_in_d=1, mp=1, days_till_event=0 ):
     d = datetime.datetime.today()
@@ -16,9 +19,9 @@ def calc_time(minute, hour, h_in_d=1, mp=1, days_till_event=0 ):
 
 def main():
     d = datetime.datetime.today()
-    c = ConfigParser(
-        filename = "sheduler_config.txt",
-        config_header = "Sheduler_config",
+    c = config_parser_local.ConfigParserClass(
+        filename = "scheduler_config.txt",
+        config_header = "Scheduler_config",
         configs_list = ['period', 'skript_name_py']
     )
     config = c.get_configs()
@@ -32,7 +35,7 @@ def main():
     period_list = ['hourly', 'daily', 'weekly', 'monthly']
     days_otw = dict(enumerate(["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]))
     days_otw_rev = dict(zip(days_otw.values(), days_otw.keys()))
-    
+
     d = datetime.datetime.today()
     if period_type == period_list[0]:
         # hourly, mm
@@ -71,22 +74,19 @@ def main():
     try:
         if sys.argv[1] == 'time': pass
     except IndexError:
-        sleep(time_to_wait)
+        if not DEBUG:
+            sleep(time_to_wait)
         # run script with __name__ == __main__
-        exec(open(config['skript_name_py']).read())
+        exec(open(config['skript_name_py'], encoding='UTF-8').read())
 
 
-# sourcery skip: remove-redundant-if
 if __name__ == '__main__':
-    # try:
-    #     if sys.argv[1] == 'time': print(f'Time to sleep: {time_to_wait}')
-    # except IndexError: main()
     main()
     try:
         if sys.argv[1] == 'time': pass
     except IndexError:
         # loop this script
         try:
-            exec(open(__file__).read())
+            exec(open(__file__, encoding='UTF-8').read())
         except RecursionError as f:
             print(str(f) + '. Please reload this script')

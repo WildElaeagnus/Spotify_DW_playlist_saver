@@ -1,0 +1,3 @@
+[Scheduler_config]
+period: weekly, Su, 19:00
+skript_name_py: Spotify_DW_playlist_saver.pyw
