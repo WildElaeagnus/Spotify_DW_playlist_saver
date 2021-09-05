@@ -6,6 +6,7 @@ Spotify_DW_playlist_saver
 Why 
 --- 
  Each week, Discover Weekly playlist is updated and the user's list of tracks he doesn't like is deleted. The program allows you to save a playlist generated from the recommendation playlist. 
+ 
  ![image](https://user-images.githubusercontent.com/54314123/132143250-be86711c-0662-4cf0-9106-cb65e718257f.png)
 
 
@@ -66,6 +67,7 @@ How it works
 ---
 &nbsp;&nbsp;&nbsp;&nbsp;Since the Spotify API doesn't have a tool to figure out which tracks in the playlist recommendations you don't like, you'll have to use a workaround.
 The method consists of the program trying to play a track from the recommendation playlist. If the track is not "disconnected," then it is possible to play it, but if the track is "disconnected," then it will not be playable and will not be included in the saved playlist. 
+
 &nbsp;&nbsp;&nbsp;&nbsp;This way a selection of 30 tracks is made and only the ones left in the playlist recommendations by the end of the week will be saved by the program into a new playlist.
 
 
