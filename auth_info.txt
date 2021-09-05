@@ -1,0 +1,12 @@
+[Spotify_auth_info]
+client_id: 
+client_secret: 
+user_id: 
+token_manual: 
+browser_profile_path: 
+webdriver_exec_path: 
+firefox_binary_path: 
+web_browser: 
+save_full_playlist: 
+publisity: 
+fav_device_name: 

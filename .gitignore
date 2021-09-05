@@ -1,6 +1,16 @@
 
-auth_info.txt
+
 
 *.pyc
 .vscode/settings.json
 geckodriver.log
+temp/test.ipynb
+reqpot/web_token.py
+reqpot/SpotifyAPI.py
+reqpot/scheduler.pyw
+reqpot/Spotify_DW_playlist_saver.pyw
+reqpot/runner.py
+reqpot/requirements.txt
+reqpot/permissions.py
+reqpot/config_parser.py
+.vscode/.ropeproject/config.py
