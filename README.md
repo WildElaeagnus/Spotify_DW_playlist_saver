@@ -3,6 +3,9 @@ Spotify_DW_playlist_saver
 ===
  Saves the weekly Spotify recommendations playlist, taking into account tracks you don't like.
 
+## Deprecation wrning
+[Here](https://github.com/akorzunin/Spotify_save_DW) is new project for the same purpose but with better implementation as a web app.
+
 Why 
 --- 
  Each week, Discover Weekly playlist is updated and the user's list of tracks he doesn't like is deleted. The program allows you to save a playlist generated from the recommendation playlist. 
